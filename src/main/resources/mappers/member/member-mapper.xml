@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="memberMapper">
+
+	<!-- <resultMap>.type: SELECT 결과를 저장할 클래스 이름 또는 MyBatis 설정파일에 설정된 alias
+		 <resultMap>.id: resultMap의 id -->
+	<resultMap type="MemberDto" id="memberResultSet">
+		<result column="m_index" property="memberIdx"/>
+		<result column="m_name" property="memberName"/>
+		<result column="m_email" property="memberEmail"/>
+		<result column="m_id" property="memberId"/>
+		<result column="m_password" property="memberPassword"/>
+		<result column="m_addressNum" property="memberAdrrNum"/>
+		<result column="m_addressFirst" property="memberAdrrFirst"/>
+		<result column="m_addressSecond" property="memberAdrrSecond"/>
+		<result column="m_phoneNum" property="memberphoneNum"/>
+		<result column="m_gender" property="memberGender"/>
+		<result column="m_birthday" property="memberBirthday"/>
+		<result column="m_joindate" property="memberJoinDate"/>
+		<result column="m_removedate" property="memberRemoveDate"/>	
+		<result column="m_auth" property="memberAuth"/>	
+	</resultMap>
+	
+	<select id="selectMemberAll" resultMap="memberResultSet">
+		SELECT * FROM S_MEMBER
+	</select>
+	
+	<!-- 로그인 -->
+	<select id="loginMember" resultMap="memberResultSet">
+		SELECT * FROM S_MEMBER
+		WHERE m_id = #{memberId}
+	</select>
+	
+	<!-- sns(이메일) 로그인 -->
+	<select id="snsLoginMember" resultMap="memberResultSet">
+		SELECT * FROM S_MEMBER
+		WHERE m_email = #{memberEmail}
+	</select>
+	
+	<!-- 이메일 중복 확인 -->
+	<select id="checkEmail" resultType="_int">
+		SELECT COUNT(*) FROM S_MEMBER <!-- 1. 테이블 컬럼들 갯수 조회 -->
+		WHERE m_email = #{memberEmail} <!-- 2. 이메일 유무를 위해 조건 추가 ( 있다면 1, 없으면 0 반환 -->
+	</select>
+	
+	<!-- 아이디 중복 확인 -->
+	<select id="checkId" resultType="_int">
+		SELECT COUNT(*) FROM S_MEMBER <!-- 1. 테이블 컬럼들 갯수 조회 -->
+		WHERE m_id = #{memberId} <!-- 2. 아이디 유무를 위해 조건 추가 ( 있다면 1, 없으면 0 반환 -->
+	</select>
+	
+	<!-- 회원 가입 -->
+	<!-- insert, update는 자동으로 true:1 , false:0 int타입으로 반환-->
+	<insert id="signupMember" parameterType="MemberDto">
+		INSERT INTO S_MEMBER(m_index,
+						   m_name,
+						   m_email,
+						   m_id,
+						   m_password,
+						   m_addressNum,
+						   m_addressFirst,
+						   m_addressSecond,
+						   m_phoneNum,
+						   m_gender,
+						   m_birthday,
+						   m_joindate)
+				VALUES (seq_s_member_idx.NEXTVAL,
+					   #{memberName},
+					   #{memberEmail},
+					   #{memberId},
+					   #{memberPassword},
+					   #{memberAdrrNum},
+					   #{memberAdrrFirst},
+					   #{memberAdrrSecond},
+					   #{memberphoneNum},
+					   #{memberGender},
+					   #{memberBirthday},
+					   SYSDATE)
+	</insert>
+	
+	<!-- sns 가입  -->
+	<insert id="snsSingup">
+		INSERT INTO S_MEMBER(m_index,
+						   m_name,
+						   m_email,
+						   m_id,
+						   m_password,
+						   m_phoneNum,
+						   m_gender,
+						   m_birthday,
+						   m_joindate,
+						   m_auth)
+				VALUES (seq_s_member_idx.NEXTVAL,
+					   #{memberName},
+					   #{memberEmail},
+					   #{memberId},
+					   #{memberPassword},
+					   #{memberphoneNum},
+					   #{memberGender},
+					   #{memberBirthday},
+					   SYSDATE,
+					   1)
+	</insert>
+	
+	<!-- id 찾기 -->
+	<select id="findId" parameterType="String" resultType="String">
+		SELECT m_id FROM S_MEMBER
+		WHERE m_name = #{memberName}
+		and
+		m_email = #{memberEmail}
+	</select>
+	
+	<!-- pw 찾기 (사용 안함)-->
+	<select id="findPw" parameterType="String" resultType="String">
+		SELECT m_password FROM S_MEMBER
+		WHERE m_id = #{memberId}
+		and
+		m_email = #{memberEmail}
+	</select>
+	
+	<!-- pw 찾기(회원번호 불러오기) -->
+	<select id="findIdx" parameterType="String" resultType="String">
+		SELECT m_index  FROM S_MEMBER
+		WHERE m_id = #{memberId}
+		and
+		m_email = #{memberEmail}
+	</select>
+	
+	<!-- pw 변경 -->
+	<!-- insert, update는 자동으로 true:1 , false:0 int타입으로 반환-->
+	<update id="changePw" parameterType="MemberDto">
+		UPDATE S_MEMBER SET m_password = #{memberPassword}
+							WHERE m_index = #{memberIdx}
+	</update>
+	
+	<!-- 마이페이지 -->
+	<select id="myPage" resultMap="memberResultSet">
+		SELECT * FROM S_MEMBER WHERE m_index = #{memberIdx}
+	</select>
+	
+	<!-- 마이페이지 수정 -->
+	<select id="updateMyPage" parameterType="MemberDto">
+		UPDATE S_MEMBER SET
+			m_name = #{memberName},
+			m_addressNum = #{memberAdrrNum},
+			m_addressFirst = #{memberAdrrFirst},
+			m_addressSecond = #{memberAdrrSecond},
+			m_phoneNum = #{memberphoneNum}
+			WHERE m_index = #{memberIdx}
+	</select>
+	
+	<!-- 이메일 인증 발송 확인 ( 이메일, 암호키 저장 ) -->
+	<insert id="createAuthKey">
+		insert into S_MEMBER_AUTH values(#{memberEmail}, #{authKey})
+	</insert>
+	
+	<!-- 이메일 인증 하면 MEMBER_AUTH(인증 유무/미인증0,인증1) 칼럼을 기본값0에서 1로 변경, 로그인을 허용함 -->
+	<update id="memberAuth">
+		<![CDATA[update S_MEMBER set m_auth = 1 where (select count(*) from S_MEMBER_AUTH where m_email = #{memberEmail} AND AUTHKEY = #{authKey}) > 0]]>
+	</update>
+	
+	
+	<!-- 회원 탈퇴 -->
+	<delete id="memberDelete">
+		DELETE FROM S_MEMBER
+		WHERE m_id = #{memberId} 
+		AND m_password =#{memberPassword}
+	</delete>
+	
+	<!-- 회원 탈퇴 ( 이메일 인증 코드 삭제 ) -->
+	<delete id="memberAuthDelete">
+		DELETE FROM S_MEMBER_AUTH
+		WHERE MEMBEREMAIL = #{memberEmail} 
+	</delete>
+	
+</mapper>
