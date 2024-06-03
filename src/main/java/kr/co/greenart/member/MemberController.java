@@ -1,4 +1,4 @@
-package kr.co.greenart.member.controller;
+package kr.co.greenart.member;
 
 import java.io.File;
 import java.lang.System.Logger;
@@ -28,20 +28,17 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import kr.co.greenart.member.model.dto.MemberDto;
-import kr.co.greenart.member.model.service.MemberService;
-import kr.co.greenart.member.model.service.MemberServiceImpl;
+import lombok.RequiredArgsConstructor;
 import oracle.jdbc.proxy.annotation.Post;
 
 @Controller
 @RequestMapping("/member")
+@RequiredArgsConstructor
 public class MemberController {
 
-	@Autowired
-	private MemberServiceImpl memberService;
+	final private MemberServiceImpl memberService;
 
-	@Autowired
-	private BCryptPasswordEncoder bcryptPasswordEncoder;
+	final private BCryptPasswordEncoder bcryptPasswordEncoder;
 
 	// id찾기 페이지
 	// http://localhost/member/searchId
@@ -55,7 +52,7 @@ public class MemberController {
 	public String findId(@RequestParam("memberName") String memberName, @RequestParam("memberEmail") String memberEmail,
 			Model model) throws Exception {
 
-		MemberDto memberdto = new MemberDto();
+		MemberDTO memberdto = new MemberDTO();
 		memberdto.setMemberName(memberName);
 		memberdto.setMemberEmail(memberEmail);
 
@@ -76,7 +73,7 @@ public class MemberController {
 	public String findPw(@RequestParam("memberId") String memberId, @RequestParam("memberEmail") String memberEmail,
 			Model model) throws Exception {
 
-		MemberDto memberdto = new MemberDto();
+		MemberDTO memberdto = new MemberDTO();
 		memberdto.setMemberId(memberId);
 		memberdto.setMemberEmail(memberEmail);
 
@@ -88,7 +85,7 @@ public class MemberController {
 
 	// pw변경
 	@PostMapping("/changePw.do")
-	public String changePw(HttpSession session, MemberDto memberdto) {
+	public String changePw(HttpSession session, MemberDTO memberdto) {
 
 		// 유효성 검사
 		String password = memberdto.getMemberPassword();
@@ -150,9 +147,9 @@ public class MemberController {
 
 	// 로그인
 	@PostMapping("/login.do")
-	public String getLoginPage(MemberDto memberDto, HttpSession session, Model model) {
+	public String getLoginPage(MemberDTO memberDto, HttpSession session, Model model) {
 
-		MemberDto loginUser = memberService.loginMember(memberDto);
+		MemberDTO loginUser = memberService.loginMember(memberDto);
 
 		// Objects.isNull(loginUser) = null : true
 		// ! null : false 논리 부정 사용했으니 비어있다면 false
@@ -198,7 +195,7 @@ public class MemberController {
 			return "common/error404";
 		} else {
 			int idx = (int) session.getAttribute("memberIdx");
-			MemberDto result = memberService.myPage(idx);
+			MemberDTO result = memberService.myPage(idx);
 
 			if (!Objects.isNull(result)) {
 				// 뷰의 myPage 객체로 / <c:when test="${myPage.
@@ -219,7 +216,7 @@ public class MemberController {
 	// 마이페이지 수정
 	@PostMapping("/updateMyPage.do")
 	@ResponseBody
-	public String editMyPage(MemberDto memberdto, HttpSession session) {
+	public String editMyPage(MemberDTO memberdto, HttpSession session) {
 		
 		int result = memberService.updateMyPage(memberdto);
 		System.out.println("result : " + memberService.updateMyPage(memberdto));
@@ -268,7 +265,7 @@ public class MemberController {
 
 	// 회원 가입
 	@PostMapping("/signup.do")
-	public String signupMember(MemberDto memberDto, HttpSession session, RedirectAttributes rttr) throws Exception {
+	public String signupMember(MemberDTO memberDto, HttpSession session, RedirectAttributes rttr) throws Exception {
 
 		// 유효성 검사
 		String password = memberDto.getMemberPassword();
@@ -377,9 +374,9 @@ public class MemberController {
 
 		// 중복 되는 이메일로 가입된 계정이 있을 경우, 해당 이메일 계정으로 접속함
 		if (checkEmail > 0) {
-			MemberDto m = new MemberDto();
+			MemberDTO m = new MemberDTO();
 			m.setMemberEmail(email);
-			MemberDto loginUser = memberService.snsLoginMember(m);
+			MemberDTO loginUser = memberService.snsLoginMember(m);
 			System.out.println(loginUser);
 			if (!Objects.isNull(loginUser)) {
 				System.out.println("데이터(네이버 계정) 있음");
@@ -396,7 +393,7 @@ public class MemberController {
 			}
 		} else {
 			System.out.println("네이버 계정 가입");
-			MemberDto md = new MemberDto();
+			MemberDTO md = new MemberDTO();
 			md.setMemberId(id);
 			md.setMemberPassword((String) userInfo.get("pw"));
 			md.setMemberEmail((String) userInfo.get("email"));
@@ -407,9 +404,9 @@ public class MemberController {
 
 			int result = memberService.snsSingup(md);
 			if (result > 0) {
-				MemberDto m = new MemberDto();
+				MemberDTO m = new MemberDTO();
 				m.setMemberId(id);
-				MemberDto loginUser = memberService.loginMember(m);
+				MemberDTO loginUser = memberService.loginMember(m);
 				System.out.println(loginUser.toString());
 				if (!Objects.isNull(loginUser)) {
 					session.setAttribute("memberIdx", loginUser.getMemberIdx());
@@ -452,9 +449,9 @@ public class MemberController {
 
 		// 중복 되는 이메일로 가입된 계정이 있을 경우, 해당 이메일 계정으로 접속함
 		if (checkEmail > 0) {
-			MemberDto m = new MemberDto();
+			MemberDTO m = new MemberDTO();
 			m.setMemberEmail(email);
-			MemberDto loginUser = memberService.snsLoginMember(m);
+			MemberDTO loginUser = memberService.snsLoginMember(m);
 			System.out.println(loginUser);
 			if (!Objects.isNull(loginUser)) {
 				System.out.println("데이터(카카오 계정) 있음");
@@ -471,7 +468,7 @@ public class MemberController {
 			}
 		} else {
 			System.out.println("카카오 계정 가입");
-			MemberDto md = new MemberDto();
+			MemberDTO md = new MemberDTO();
 			md.setMemberId(id);
 			md.setMemberPassword((String) userInfo.get("pw"));
 			md.setMemberEmail((String) userInfo.get("email"));
@@ -482,9 +479,9 @@ public class MemberController {
 
 			int result = memberService.snsSingup(md);
 			if (result > 0) {
-				MemberDto m = new MemberDto();
+				MemberDTO m = new MemberDTO();
 				m.setMemberId(id);
-				MemberDto loginUser = memberService.loginMember(m);
+				MemberDTO loginUser = memberService.loginMember(m);
 				System.out.println(loginUser.toString());
 				if (!Objects.isNull(loginUser)) {
 					session.setAttribute("memberIdx", loginUser.getMemberIdx());
@@ -518,9 +515,9 @@ public class MemberController {
 	//회원 탈퇴
 	@PostMapping("/memberDelete.do")
 	@ResponseBody // dto 사용 하고 ajax에서 받아올때 dto 필드명 같아야함
-	public String memberDelete(MemberDto memberdto, HttpSession session, Model model) {		
+	public String memberDelete(MemberDTO memberdto, HttpSession session, Model model) {		
 		
-		MemberDto loginUser = memberService.loginMember(memberdto);
+		MemberDTO loginUser = memberService.loginMember(memberdto);
 		System.out.println("loginUser : " + loginUser);
 		
 		System.out.println("memberDto : " + memberdto.getMemberPassword());

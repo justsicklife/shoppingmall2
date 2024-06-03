@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import kr.co.greenart.board.model.dto.BoardDto;
 import kr.co.greenart.board.model.service.BoardService;
 import kr.co.greenart.board.model.service.BoardServiceImpl;
-import kr.co.greenart.common.model.dto.PageInfo;
-import kr.co.greenart.common.template.Pagination;
-import kr.co.greenart.member.model.dto.MemberDto;
-import kr.co.greenart.member.model.service.MemberService;
+import kr.co.greenart.common.PageInfo;
+import kr.co.greenart.common.Pagination;
+import kr.co.greenart.member.MemberDTO;
+import kr.co.greenart.member.MemberService;
 
 @Controller
 @RequestMapping("/board")

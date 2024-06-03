@@ -1,4 +1,4 @@
-package kr.co.greenart.common.model.dto;
+package kr.co.greenart.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

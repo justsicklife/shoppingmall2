@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 
 import kr.co.greenart.board.model.dao.BoardDao;
 import kr.co.greenart.board.model.dto.BoardDto;
-import kr.co.greenart.common.model.dto.PageInfo;
-import kr.co.greenart.member.model.dto.MemberDto;
+import kr.co.greenart.common.PageInfo;
+import kr.co.greenart.member.MemberDTO;
 
 @Service
 public class BoardServiceImpl implements BoardService{

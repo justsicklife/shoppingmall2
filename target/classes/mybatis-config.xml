@@ -16,7 +16,7 @@
 	<typeAliases>
 		<typeAlias type="kr.co.greenart.board.model.dto.BoardDto" alias="BoardDto"/>
 		<typeAlias type="kr.co.greenart.product.ProductDTO" alias="ProductDTO"/>
-		<typeAlias type="kr.co.greenart.member.model.dto.MemberDto" alias="MemberDto"/>
+		<typeAlias type="kr.co.greenart.member.MemberDTO" alias="MemberDTO"/>
 		<typeAlias type="kr.co.greenart.chat.model.dto.ChatRoomDTO" alias="chatRoom"/>
 		<typeAlias type="kr.co.greenart.chat.model.dto.ChatMessageDTO" alias="chatMessage"/>
 		<typeAlias type="kr.co.greenart.review.ReviewDTO" alias="Review"/>

@@ -19,20 +19,6 @@ public class FileUpload {
 
 		long fileSize = fileData.getSize();
 
-		/*
-		 * 
-		 * System.out.println("file Info");
-		 * 
-		 * System.out.println("fileName " + fileName);
-		 * 
-		 * System.out.println("originalFileName :" + originalFileName);
-		 * 
-		 * System.out.println("contentType :" + contentType);
-		 * 
-		 * System.out.println("fileSize :" + fileSize);
-		 * 
-		 */
-
 		InputStream is = null;
 
 		OutputStream out = null;

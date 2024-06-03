@@ -1,4 +1,4 @@
-package kr.co.greenart.member.model.service;
+package kr.co.greenart.member;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -29,31 +29,28 @@ import org.springframework.stereotype.Service;
 
 import kr.co.greenart.common.MailUtils;
 import kr.co.greenart.common.TempKey;
-import kr.co.greenart.member.model.dao.MemberDao;
-import kr.co.greenart.member.model.dto.MemberDto;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService{
 
-	@Autowired
-	private SqlSessionTemplate sqlSession; //mybatis에서 사용되는 내장 템플릿
+	final private SqlSessionTemplate sqlSession; //mybatis에서 사용되는 내장 템플릿
 	
-	@Autowired
-	private MemberDao memberDao;
+	final private MemberRepository memberDao;
 	
-	@Inject
-	private JavaMailSender mailSender;
+	final private JavaMailSender mailSender;
 	
 	
 	//로그인
 	@Override
-	public MemberDto loginMember(MemberDto m) {
+	public MemberDTO loginMember(MemberDTO m) {
 		return memberDao.loginMember(sqlSession, m);
 	}
 	
 	//sns(이메일)로그인
 	@Override
-	public MemberDto snsLoginMember(MemberDto m) {
+	public MemberDTO snsLoginMember(MemberDTO m) {
 		return memberDao.snsLoginMember(sqlSession, m);
 	}
 	
@@ -71,13 +68,13 @@ public class MemberServiceImpl implements MemberService{
 
 	//회원 가입 ( 사용 안함 )
 	@Override
-	public int signupMember(MemberDto memberDto) {
+	public int signupMember(MemberDTO memberDto) {
 		return memberDao.signupMember(sqlSession, memberDto);
 	}
 	
 	//id 찾기
 	@Override
-	public String findId(MemberDto memberdto) {
+	public String findId(MemberDTO memberdto) {
 		
 //		response.setContentType("text/html;charset=utf-8");
 //		PrintWriter out;
@@ -107,31 +104,31 @@ public class MemberServiceImpl implements MemberService{
 
 	//pw 찾기(사용 안함)
 	@Override
-	public String findPw(MemberDto memberdto) {
+	public String findPw(MemberDTO memberdto) {
 		return memberDao.findPw(sqlSession, memberdto);
 	}
 
 	//pw 찾기(회원번호 가져오기)
 	@Override
-	public String findIdx(MemberDto memberdto) {
+	public String findIdx(MemberDTO memberdto) {
 		return memberDao.findIdx(sqlSession, memberdto);
 	}
 	
 	//pw변경
 	@Override
-	public int changePw(MemberDto memberdto) {
+	public int changePw(MemberDTO memberdto) {
 		return memberDao.changePw(sqlSession, memberdto);
 	}
 
 	//마이페이지 보기
 	@Override
-	public MemberDto myPage(int memberIdx) {
+	public MemberDTO myPage(int memberIdx) {
 		return memberDao.myPage(sqlSession, memberIdx);
 	}
 	
 	//마이페이지 업데이트
 	@Override
-	public int updateMyPage(MemberDto memberdto) {
+	public int updateMyPage(MemberDTO memberdto) {
 		return memberDao.updateMyPage(sqlSession, memberdto);
 	}
 	
@@ -145,7 +142,7 @@ public class MemberServiceImpl implements MemberService{
     
     //이메일 발송
 	@Override
-	public void sendMail(MemberDto memberdto) throws Exception {
+	public void sendMail(MemberDTO memberdto) throws Exception {
 		memberDao.signupMember(sqlSession, memberdto);
 		
 		String key = new TempKey().getKey(50,false);
@@ -168,7 +165,7 @@ public class MemberServiceImpl implements MemberService{
 	
 	//소셜 가입시 받은 데이터 insert
 	@Override
-	public int snsSingup(MemberDto memberdto) {
+	public int snsSingup(MemberDTO memberdto) {
 		return memberDao.snsSingup(sqlSession, memberdto);
 	}
 	
@@ -460,13 +457,13 @@ public class MemberServiceImpl implements MemberService{
 
 	// 회원 탈퇴
 	@Override
-	public int memberDelete(MemberDto bo) {
+	public int memberDelete(MemberDTO bo) {
 		return memberDao.memberDelete(sqlSession, bo);
 	}
 	
 	// 회원 탈퇴 ( 이메일 인증 삭제 )
 	@Override
-	public int memberAuthDelete(MemberDto bo) {
+	public int memberAuthDelete(MemberDTO bo) {
 		return memberDao.memberAuthDelete(sqlSession, bo);
 	}
 	

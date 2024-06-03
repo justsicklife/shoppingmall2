@@ -1,4 +1,4 @@
-package kr.co.greenart.member.model.dao;
+package kr.co.greenart.member;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,21 +6,20 @@ import java.util.Map;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
-import kr.co.greenart.member.model.dto.MemberDto;
 import lombok.NoArgsConstructor;
 
 @Repository
-public class MemberDao {
+public class MemberRepository {
 	
 	
 	//로그인
 	// selectOne : 하나만가져옴
-	public MemberDto loginMember(SqlSessionTemplate sqlSession, MemberDto m) {
+	public MemberDTO loginMember(SqlSessionTemplate sqlSession, MemberDTO m) {
 		return sqlSession.selectOne("memberMapper.loginMember",m);
 	}
 	
 	//sns(이메일) 로그인
-	public MemberDto snsLoginMember(SqlSessionTemplate sqlSession, MemberDto m ) {
+	public MemberDTO snsLoginMember(SqlSessionTemplate sqlSession, MemberDTO m ) {
 		return sqlSession.selectOne("memberMapper.snsLoginMember",m);
 	}
 	
@@ -38,12 +37,12 @@ public class MemberDao {
 	
 	//회원 가입
 	//insert : 데이터 전송
-	public int signupMember(SqlSessionTemplate sqlSession, MemberDto memberdto) {
+	public int signupMember(SqlSessionTemplate sqlSession, MemberDTO memberdto) {
 		return sqlSession.insert("memberMapper.signupMember", memberdto);
 	}
 	
 	//id찾기
-	public String findId(SqlSessionTemplate sqlSession, MemberDto memberdto) {
+	public String findId(SqlSessionTemplate sqlSession, MemberDTO memberdto) {
 //		MemberDto memberdto = new MemberDto();
 //		
 //		memberdto.setMemberName(memberName);
@@ -52,17 +51,17 @@ public class MemberDao {
 	}
 	
 	//pw찾기(사용 안함) 
-	public String findPw(SqlSessionTemplate sqlSession, MemberDto memberdto) {
+	public String findPw(SqlSessionTemplate sqlSession, MemberDTO memberdto) {
 		return sqlSession.selectOne("memberMapper.findPw", memberdto);
 	}
 	
 	//pw찾기(회원번호 가져오기)
-	public String findIdx(SqlSessionTemplate sqlSession, MemberDto memberdto) {
+	public String findIdx(SqlSessionTemplate sqlSession, MemberDTO memberdto) {
 		return sqlSession.selectOne("memberMapper.findIdx", memberdto);
 	}
 	
 	//pw변경
-	public int changePw(SqlSessionTemplate sqlSession, MemberDto memberdto) {
+	public int changePw(SqlSessionTemplate sqlSession, MemberDTO memberdto) {
 		return sqlSession.update("memberMapper.changePw", memberdto);
 	}
 	
@@ -86,28 +85,28 @@ public class MemberDao {
 	}
 	
 	//sns 로그인, 가입
-	public int snsSingup(SqlSessionTemplate sqlSession, MemberDto md) {
+	public int snsSingup(SqlSessionTemplate sqlSession, MemberDTO md) {
 		return sqlSession.insert("memberMapper.snsSingup", md);
 	}
 	
 	
 	//마이페이지
-	public MemberDto myPage(SqlSessionTemplate sqlsession, int memberIdx) {
+	public MemberDTO myPage(SqlSessionTemplate sqlsession, int memberIdx) {
 		return sqlsession.selectOne("memberMapper.myPage", memberIdx);
 	}
 	
 	//마이페이지 업데이트
-	public int updateMyPage(SqlSessionTemplate sqlsession, MemberDto memberdto) {
+	public int updateMyPage(SqlSessionTemplate sqlsession, MemberDTO memberdto) {
 		return sqlsession.update("memberMapper.updateMyPage", memberdto);
 	}
 	
 	//회원 탈퇴
-	public int memberDelete(SqlSessionTemplate sqlsession, MemberDto bo) {
+	public int memberDelete(SqlSessionTemplate sqlsession, MemberDTO bo) {
 		return sqlsession.delete("memberMapper.memberDelete", bo);
 	}
 	
 	//회원 탈퇴 ( 이메일 코드 삭제 )
-	public int memberAuthDelete(SqlSessionTemplate sqlsession, MemberDto bo) {
+	public int memberAuthDelete(SqlSessionTemplate sqlsession, MemberDTO bo) {
 		return sqlsession.delete("memberMapper.memberAuthDelete", bo);
 	}
 	

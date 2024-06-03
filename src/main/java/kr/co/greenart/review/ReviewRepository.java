@@ -7,7 +7,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
-import kr.co.greenart.common.model.dto.PageInfo;
+import kr.co.greenart.common.PageInfo;
 
 @Repository
 public class ReviewRepository {

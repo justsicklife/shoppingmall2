@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import kr.co.greenart.common.model.dto.PageInfo;
+import kr.co.greenart.common.PageInfo;
 
 @Service
 public class ReviewService {

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,9 @@ public class ProductService {
 	final private SqlSessionTemplate sql;
 	
 	final private ProductRepository productRepository;
+		
+	private static final Logger logger = LoggerFactory.getLogger(ProductService.class);
+
 	
 	public Map<String,List<ProductDTO>> getProductByTypes(List<ProductType> types) {
 		Map<String,List<ProductDTO>> productsByType = new HashMap<>();
@@ -30,11 +35,11 @@ public class ProductService {
 				product.setProduct_image(product.getProduct_image_group().split(",")[0]);
 			});
 			
-			System.out.println(type.getLabel());
-			System.out.println(productList);
 			productsByType.put(type.getLabel(), productList);
 			
 		});
+
+		logger.info("getProductByTypes");
 		
 		return productsByType;
 	}
@@ -46,9 +51,5 @@ public class ProductService {
 	public ProductDTO productFindById(int id) {
 		return productRepository.productFindById(sql,id);
 	}
-	
-//	public List<ProductDTO> productFindByType(String type) {
-//		return productRepository.productFindByType(sql,type);
-//	}
 
 }

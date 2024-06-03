@@ -7,8 +7,8 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
 import kr.co.greenart.board.model.dto.BoardDto;
-import kr.co.greenart.common.model.dto.PageInfo;
-import kr.co.greenart.member.model.dto.MemberDto;
+import kr.co.greenart.common.PageInfo;
+import kr.co.greenart.member.MemberDTO;
 
 @Repository
 public class BoardDao {

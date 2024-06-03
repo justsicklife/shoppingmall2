@@ -10,12 +10,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import lombok.RequiredArgsConstructor;
+
 @Controller
 @RequestMapping("/review")
+@RequiredArgsConstructor
 public class ReviewController {
 	
-	@Autowired
-	private ReviewService reviewService;
+	final private ReviewService reviewService;
 	
 	@GetMapping("/create")
 	public String getReviewCreatePage(

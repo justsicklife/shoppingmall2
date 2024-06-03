@@ -23,8 +23,6 @@ public class FileUploadController {
 			throws IOException {
 
 		MultipartFile imgfile = multipartRequest.getFile("Filedata"); // write.jsp 부분에서 input file의 name 입니다.
-
-		System.out.println(imgfile);
 		
 		Calendar cal = Calendar.getInstance();
 
