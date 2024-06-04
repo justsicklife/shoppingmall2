@@ -18,7 +18,7 @@
 	</select>
 	
 	<insert id="ChatMessageInsert" parameterType="chatMessage">
-		insert into s_chat_message(cm_id,m_idx,cr_id,cm_content,cm_date) values(s_chat_message_seq.nextval,#{memberIdx}, #{chatRoomId},#{chatMessageContent},#{chatMessageDate})
+		insert into s_chat_message(cm_id,m_idx,cr_id,cm_content,cm_date) values(s_chat_message_seq.nextval,#{memberIdx}, #{chatRoomId},#{chatMessageContent},TO_CHAR(sysdate,'YYYY-MM-DD HH24:mi:SS'))
 	</insert>
 	
 	

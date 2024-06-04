@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import kr.co.greenart.board.model.dto.BoardDto;
-import kr.co.greenart.board.model.service.BoardServiceImpl;
+import kr.co.greenart.board.BoardDTO;
+import kr.co.greenart.board.BoardServiceImpl;
 import kr.co.greenart.common.PageInfo;
 import kr.co.greenart.common.Pagination;
 import kr.co.greenart.review.ReviewDTO;
@@ -92,9 +92,9 @@ public class ProductController {
 
 		PageInfo inquiryPi = Pagination.getPageInfo(listCount, inquryCurrentPage, pageLimit, boardLimit);
 
-		List<BoardDto> list = boardservice.selectListAll(inquiryPi, id);
+		List<BoardDTO> list = boardservice.selectListAll(inquiryPi, id);
 
-		List<BoardDto> answerList = boardservice.selectAnswerAll(id);
+		List<BoardDTO> answerList = boardservice.selectAnswerAll(id);
 
 		int reviewListCount = reviewService.selectListCount(id);
 

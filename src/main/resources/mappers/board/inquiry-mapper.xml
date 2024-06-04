@@ -3,7 +3,7 @@
 
 <mapper namespace="inquiryMapper">
 
-	<resultMap type="BoardDto" id="boardResultSet">
+	<resultMap type="BoardDTO" id="boardResultSet">
 		<result column="b_question" property="boardQuestionNum"></result>
 		<result column="b_answer" property="boardAnswerNum"></result>
 		<result column="b_productNum" property="boardProductNum"></result>
@@ -35,7 +35,7 @@
 	</select>
 	
 	<!-- 유저 글 작성 -->
-	<insert id="insertInquiry" parameterType="BoardDto">
+	<insert id="insertInquiry" parameterType="BoardDTO">
 		INSERT INTO s_board(b_question,
 							b_answer,
 							b_productNum,
@@ -61,7 +61,7 @@
 	</insert>
 	
 	<!-- 관리자 답변 하기 -->
-	<insert id="inquiryAnswer" parameterType="BoardDto">
+	<insert id="inquiryAnswer" parameterType="BoardDTO">
 		INSERT INTO s_board(b_question,
 							b_answer,
 							b_productNum,
@@ -87,7 +87,7 @@
 	</insert>
 	
 	<!-- 문의에 답변 했을시 체크 업데이트 -->
-	<update id="answerChkUpdate" parameterType="BoardDto">
+	<update id="answerChkUpdate" parameterType="BoardDTO">
 		UPDATE S_BOARD SET b_answer_Y = 1 
 		WHERE b_question = #{boardQuestionNum}
 	</update>
@@ -101,7 +101,7 @@
 	</select>
 	
 	<!-- 유저 문의 업데이트-->
-	<update id="inquiryUpdate" parameterType="BoardDto">
+	<update id="inquiryUpdate" parameterType="BoardDTO">
 		UPDATE S_BOARD 
 		SET b_category = #{boardCategory},
 			b_secret = #{boardSecret},
@@ -111,7 +111,7 @@
 	</update>
 	
 	<!-- 유저 문의 삭제 -->
-	<delete id="inquiryDelete" parameterType="BoardDto">
+	<delete id="inquiryDelete" parameterType="BoardDTO">
 		DELETE S_BOARD WHERE b_question = #{boardQuestionNum}	
 	</delete>
 	
@@ -123,7 +123,7 @@
 	</select>
 	
 	<!-- 관리자 답변 업데이트 -->
-	<update id="answerUpdate" parameterType="BoardDto">
+	<update id="answerUpdate" parameterType="BoardDTO">
 		UPDATE S_BOARD
 		SET b_content = #{boardContent}
 		WHERE b_answer = 1 AND b_question = #{boardQuestionNum}
