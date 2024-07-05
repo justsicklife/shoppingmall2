@@ -20,10 +20,12 @@ import kr.co.greenart.common.Pagination;
 import kr.co.greenart.member.MemberDTO;
 import kr.co.greenart.member.MemberService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @RequestMapping("/board")
 @RequiredArgsConstructor
+@Slf4j
 public class BoardController {
 
 	final private BoardServiceImpl boardservice;
@@ -72,20 +74,20 @@ public class BoardController {
 
 				// 변환된 값을 DTO에 설정
 				boardDto.setBoardQuestionNum(parsedQuestionNum);
-				System.out.println("boardQuestionNum: " + parsedQuestionNum);
+				log.info("boardQuestionNum: " + parsedQuestionNum);
 
-				System.out.println("boardProductNum : " + boardDto.getBoardProductNum());
+				log.info("boardProductNum : " + boardDto.getBoardProductNum());
 
 				// 임시 접속자 ( 합치고 수정할것 )
 				boardDto.setBoardMemberId(memberId);
-				System.out.println("boardMemberId: " + memberId);
+				log.info("boardMemberId: " + memberId);
 				model.addAttribute("user", memberId);
 				model.addAttribute("boardQuestionNum", boardDto.getBoardQuestionNum());
 				model.addAttribute("boardProductNum", boardDto.getBoardProductNum());
 
 				return "/board/admin_write";
 			} else {
-				System.out.println("boardQuestionNum 전송 되지 않음");
+				log.info("boardQuestionNum 전송 되지 않음");
 				// boardQuestionNum이 전송되지 않은 경우 처리
 				// 원하는 방식으로 처리할 수 있도록 수정
 				return "error"; // 혹은 다른 오류 처리 페이지로 리다이렉트 등
@@ -110,7 +112,7 @@ public class BoardController {
 		boardDto.setBoardMemberId(memberId);
 		boardDto.setBoardMemberIdx(memberIdx);
 
-		System.out.println(boardDto);
+		log.info(boardDto.toString());
 
 		try {
 			int result = boardservice.inquiryAnswer(boardDto);
@@ -120,7 +122,7 @@ public class BoardController {
 			return "success";
 
 		} catch (Exception e) {
-			System.out.println("catch 실행");
+			log.info("catch 실행");
 			return "error";
 		}
 	}
@@ -155,10 +157,10 @@ public class BoardController {
 		int result = boardservice.inquiryUpdate(boardDto);
 
 		if (result > 0) {
-			System.out.println("문의 업데이트 성공");
+			log.info("문의 업데이트 성공");
 			return "success";
 		} else {
-			System.out.println("문의 업데이트 실패");
+			log.info("문의 업데이트 실패");
 			return "error";
 		}
 
@@ -170,16 +172,16 @@ public class BoardController {
 	@ResponseBody
 	public String inquiryDelete(@RequestBody BoardDTO boardDto, HttpSession session) {
 
-		System.out.println("문의 삭제 boardDto : " + boardDto);
-		System.out.println("문의 삭제 boardrDto.getBoardQuestionNum() : " + boardDto.getBoardQuestionNum());
+		log.info("문의 삭제 boardDto : " + boardDto);
+		log.info("문의 삭제 boardrDto.getBoardQuestionNum() : " + boardDto.getBoardQuestionNum());
 
 		int result = boardservice.inquiryDelete(boardDto);
 
 		if (result > 0) {
-			System.out.println("문의 삭제 성공");
+			log.info("문의 삭제 성공");
 			return "success";
 		} else {
-			System.out.println("문의 삭제 실패");
+			log.info("문의 삭제 실패");
 			return "error";
 		}
 	}
@@ -214,10 +216,10 @@ public class BoardController {
 			int result = boardservice.answerUpdate(boardDto);
 
 			if (result > 0) {
-				System.out.println("관리자 답변 업데이트 성공");
+				log.info("관리자 답변 업데이트 성공");
 				return "success";
 			} else {
-				System.out.println("관리자 답변 업데이트 실패");
+				log.info("관리자 답변 업데이트 실패");
 				return "error";
 			}
 	}

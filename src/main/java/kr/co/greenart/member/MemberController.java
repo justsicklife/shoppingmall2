@@ -29,11 +29,13 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import oracle.jdbc.proxy.annotation.Post;
 
 @Controller
 @RequestMapping("/member")
 @RequiredArgsConstructor
+@Slf4j
 public class MemberController {
 
 	final private MemberServiceImpl memberService;
@@ -44,6 +46,7 @@ public class MemberController {
 	// http://localhost/member/searchId
 	@GetMapping("/searchId")
 	public String searchId() {
+		log.info("searchId");
 		return "/member/search_id";
 	}
 
@@ -52,6 +55,8 @@ public class MemberController {
 	public String findId(@RequestParam("memberName") String memberName, @RequestParam("memberEmail") String memberEmail,
 			Model model) throws Exception {
 
+		log.info("findId");
+		
 		MemberDTO memberdto = new MemberDTO();
 		memberdto.setMemberName(memberName);
 		memberdto.setMemberEmail(memberEmail);
@@ -78,7 +83,7 @@ public class MemberController {
 		memberdto.setMemberEmail(memberEmail);
 
 		model.addAttribute("memberIdx", memberService.findIdx(memberdto));
-		System.out.println("memberIdx, memberSercvice.findIdx(memberdto) : " + memberService.findIdx(memberdto));
+		log.info("memberIdx, memberSercvice.findIdx(memberdto) : " + memberService.findIdx(memberdto));
 
 		return "/member/change_pw";
 	}
@@ -92,30 +97,30 @@ public class MemberController {
 		String passwordChk = memberdto.getMemberPasswordChk();
 		String passwordRegex = "^(?=.*[a-zA-Z])(?=.*[@$!%*?&\\#])[A-Za-z\\d@$!%*?&\\#]{8,20}$";
 
-		System.out.println("member :" + memberdto);
-		System.out.println("password : " + password);
+		log.info("member :" + memberdto);
+		log.info("password : " + password);
 
 		if (password.matches(passwordRegex) && password.equals(passwordChk)) {
 
-			System.out.println("중복 확인 및 유효성 검사 완료");
-			System.out.println("password : " + password);
-			System.out.println("savePw :" + memberdto.getMemberPassword());
+			log.info("중복 확인 및 유효성 검사 완료");
+			log.info("password : " + password);
+			log.info("savePw :" + memberdto.getMemberPassword());
 
 			// 패스워드 암호화
 			String bcryPassword = bcryptPasswordEncoder.encode(memberdto.getMemberPassword());
 			memberdto.setMemberPassword(bcryPassword);
-			System.out.println("bcryPassword : " + bcryPassword);
-			System.out.println("member :" + memberdto);
+			log.info("bcryPassword : " + bcryPassword);
+			log.info("member :" + memberdto);
 
 			// update 서비스 실행
 			int result = memberService.changePw(memberdto);
-			System.out.println("result : " + result);
-			System.out.println("update_member :" + memberdto);
+			log.info("result : " + result);
+			log.info("update_member :" + memberdto);
 
-			System.out.println("비밀번호 변경 완료");
+			log.info("비밀번호 변경 완료");
 			return "/signin/signin";
 		} else {
-			System.out.println("비밀번호 변경 실패, 유효성 검사 불일치");
+			log.info("비밀번호 변경 실패, 유효성 검사 불일치");
 			return "/shop/index"; // 임시로 메인 페이지 이동 ( error )
 		}
 	}
@@ -141,7 +146,7 @@ public class MemberController {
 	@GetMapping("/logout.do")
 	public String logoutMember(HttpSession session, Model model) {
 		session.invalidate();
-		System.out.println("로그아웃");
+		log.info("로그아웃");
 		return "redirect:/product/index";
 	}
 
@@ -159,27 +164,27 @@ public class MemberController {
 				&& bcryptPasswordEncoder.matches(memberDto.getMemberPassword(), loginUser.getMemberPassword())
 				&& loginUser.getMemberAuth() == 1) {
 
-			System.out.println("로그인 성공");
-			System.out.println("유저가 입력한 비밀번호 : " + memberDto.getMemberPassword());
+			log.info("로그인 성공");
+			log.info("유저가 입력한 비밀번호 : " + memberDto.getMemberPassword());
 
 			session.setAttribute("memberIdx", loginUser.getMemberIdx());
 			session.setAttribute("memberId", loginUser.getMemberId());
 			session.setAttribute("memberName", loginUser.getMemberName());
 			session.setAttribute("memberEmail", loginUser.getMemberEmail());
 			
-			System.out.println("id : " +loginUser.getMemberId());
-			System.out.println("name : " + loginUser.getMemberEmail());
+			log.info("id : " +loginUser.getMemberId());
+			log.info("name : " + loginUser.getMemberEmail());
 			
 			return "redirect:/product/index";
 		} else if (Objects.isNull(loginUser)
 				|| !bcryptPasswordEncoder.matches(memberDto.getMemberPassword(), loginUser.getMemberPassword())) {
-			System.out.println("로그인 실패");
+			log.info("로그인 실패");
 			model.addAttribute("loginError", true); // 로그인 실패를 나타내는 속성 추가 (signin.jsp 스크립트 실행)
 			return "/signin/signin";
 		} else if (loginUser.getMemberAuth() == 0) {
 			return "/member/registerReady";
 		} else {
-			System.out.println("로그인 에러");
+			log.info("로그인 에러");
 			return "error";
 
 		}
@@ -200,11 +205,11 @@ public class MemberController {
 			if (!Objects.isNull(result)) {
 				// 뷰의 myPage 객체로 / <c:when test="${myPage.
 				model.addAttribute("myPage", result);
-				System.out.println("result : " + result);
+				log.info("result : " + result);
 
 				// session에서 받은 memberIdx를 뷰의 user로 초기화 / <c:when test="${myPage.memberIdx == user}">
 				model.addAttribute("user", idx);
-				System.out.println("user : " + idx);
+				log.info("user : " + idx);
 
 				return "/member/mypage";
 			} else {
@@ -219,10 +224,10 @@ public class MemberController {
 	public String editMyPage(MemberDTO memberdto, HttpSession session) {
 		
 		int result = memberService.updateMyPage(memberdto);
-		System.out.println("result : " + memberService.updateMyPage(memberdto));
+		log.info("result : " + memberService.updateMyPage(memberdto));
 		
 		if (result > 0) {
-			System.out.println("회원 정보 수정 완료");
+			log.info("회원 정보 수정 완료");
 			return "success"; // ajax로 수정 성공 메시지 리턴
 		} else {
 			return "fail"; // ajax로 수정 실패 메시지 리턴
@@ -240,16 +245,16 @@ public class MemberController {
 		int resultId = memberService.checkId(id);
 		int resultEmail = memberService.checkEmail(email);
 
-//		System.out.println("resultId : " + resultId);
-//		System.out.println("resultEmail : " + resultEmail);
+//		log.info("resultId : " + resultId);
+//		log.info("resultEmail : " + resultEmail);
 
 		if (resultId > 0 && resultEmail > 0) {
 			return "failed";
 		} else if (resultId > 0 && resultEmail <= 0) {
-			System.out.println("아이디 중복");
+			log.info("아이디 중복");
 			return "idFailed";
 		} else if (resultId <= 0 && resultEmail > 0) {
-			System.out.println("이메일 중복");
+			log.info("이메일 중복");
 			return "emailFailed";
 		} else {
 			return "success";
@@ -285,20 +290,20 @@ public class MemberController {
 		// id, email 중복 확인 메서드 ( ajax로 요청하던 메서드에 email을 담고 결과값 반환 받음 , String chkMember
 		// = failed , emailFailed, idFailed, success 중 하나 반환 받음)
 		String chkMember = checkMember(id, email);
-//		System.out.println("chkMember : " + chkMember);
+//		log.info("chkMember : " + chkMember);
 //		
-//		System.out.println("member :" + memberDto);
-//		System.out.println(chkMember.equals("success"));
+//		log.info("member :" + memberDto);
+//		log.info(chkMember.equals("success"));
 //		
-//		System.out.println("password : " + password);
-//		System.out.println("chkMember : " + chkMember);
-//		System.out.println("email : " + email);
-//		System.out.println("id : " + id);
+//		log.info("password : " + password);
+//		log.info("chkMember : " + chkMember);
+//		log.info("email : " + email);
+//		log.info("id : " + id);
 
 		if (password.matches(passwordRegex) && password.equals(passwordChk) && chkMember.equals("success")
 				&& email.matches(emailRegex) && id.matches(idRegex)) {
 
-			System.out.println("중복 확인 및 유효성 검사 완료");
+			log.info("중복 확인 및 유효성 검사 완료");
 
 			// 패스워드 암호화
 			String bcryPassword = bcryptPasswordEncoder.encode(memberDto.getMemberPassword());
@@ -315,14 +320,14 @@ public class MemberController {
 			return "redirect:/member/registerAuth";
 
 //			if(result > 0) { //데이터가 전송 가능하면
-//				System.out.println("가입 완료");
+//				log.info("가입 완료");
 //				return "signin/signin";
 //			} else {
-//				System.out.println("데이터 전송 실패");
+//				log.info("데이터 전송 실패");
 //				return "shop/index"; // 임시로 메인 페이지 이동 ( error )
 //			}
 		} else {
-			System.out.println("회원가입 유효성 검사 불일치");
+			log.info("회원가입 유효성 검사 불일치");
 			return "shop/index"; // 임시로 메인 페이지 이동 ( error )
 		}
 	}
@@ -356,16 +361,16 @@ public class MemberController {
 
 		String access_Token = memberService.getAccessTokenNaver(code);
 		// 위의 access_Token 받는 걸 확인한 후에 밑에 진행
-		System.out.println("access_Token" + access_Token);
+		log.info("access_Token" + access_Token);
 
 		HashMap<String, Object> userInfo = memberService.getUserInfoNaver(access_Token);
-		System.out.println("###id#### : " + userInfo.get("id"));
-		System.out.println("###pw#### : " + userInfo.get("pw"));
-		System.out.println("###email#### : " + userInfo.get("email"));
-		System.out.println("###name#### : " + userInfo.get("name"));
-		System.out.println("###phoneNum#### : " + userInfo.get("phoneNum"));
-		System.out.println("###gender#### : " + userInfo.get("gender"));
-		System.out.println("###birthday#### : " + userInfo.get("birthday"));
+		log.info("###id#### : " + userInfo.get("id"));
+		log.info("###pw#### : " + userInfo.get("pw"));
+		log.info("###email#### : " + userInfo.get("email"));
+		log.info("###name#### : " + userInfo.get("name"));
+		log.info("###phoneNum#### : " + userInfo.get("phoneNum"));
+		log.info("###gender#### : " + userInfo.get("gender"));
+		log.info("###birthday#### : " + userInfo.get("birthday"));
 		String id = (String) userInfo.get("id");
 		String email = (String) userInfo.get("email");
 
@@ -377,9 +382,9 @@ public class MemberController {
 			MemberDTO m = new MemberDTO();
 			m.setMemberEmail(email);
 			MemberDTO loginUser = memberService.snsLoginMember(m);
-			System.out.println(loginUser);
+			log.info(loginUser.toString());
 			if (!Objects.isNull(loginUser)) {
-				System.out.println("데이터(네이버 계정) 있음");
+				log.info("데이터(네이버 계정) 있음");
 				session.setAttribute("memberIdx", loginUser.getMemberIdx());
 //				String sessionMemberIdx = String.valueOf(loginUser.getMemberIdx());
 //				session.setAttribute("sessionMemberIdx", sessionMemberIdx);
@@ -392,7 +397,7 @@ public class MemberController {
 				return "/signin/signin";
 			}
 		} else {
-			System.out.println("네이버 계정 가입");
+			log.info("네이버 계정 가입");
 			MemberDTO md = new MemberDTO();
 			md.setMemberId(id);
 			md.setMemberPassword((String) userInfo.get("pw"));
@@ -407,7 +412,7 @@ public class MemberController {
 				MemberDTO m = new MemberDTO();
 				m.setMemberId(id);
 				MemberDTO loginUser = memberService.loginMember(m);
-				System.out.println(loginUser.toString());
+				log.info(loginUser.toString());
 				if (!Objects.isNull(loginUser)) {
 					session.setAttribute("memberIdx", loginUser.getMemberIdx());
 //					String sessionMemberIdx = String.valueOf(loginUser.getMemberIdx());
@@ -434,13 +439,13 @@ public class MemberController {
 		// 위의 access_Token 받는 걸 확인한 후에 밑에 진행
 
 		HashMap<String, Object> userInfo = memberService.getUserInfoKakao(access_Token);
-		System.out.println("###id#### : " + userInfo.get("id"));
-		System.out.println("###pw#### : " + userInfo.get("pw"));
-		System.out.println("###email#### : " + userInfo.get("email"));
-//		System.out.println("###name#### : " + userInfo.get("name"));
-//		System.out.println("###phoneNum#### : " + userInfo.get("phoneNum"));
-//		System.out.println("###gender#### : " + userInfo.get("gender"));
-//		System.out.println("###birthday#### : " + userInfo.get("birthday"));
+		log.info("###id#### : " + userInfo.get("id"));
+		log.info("###pw#### : " + userInfo.get("pw"));
+		log.info("###email#### : " + userInfo.get("email"));
+//		log.info("###name#### : " + userInfo.get("name"));
+//		log.info("###phoneNum#### : " + userInfo.get("phoneNum"));
+//		log.info("###gender#### : " + userInfo.get("gender"));
+//		log.info("###birthday#### : " + userInfo.get("birthday"));
 		String id = (String) userInfo.get("id");
 		String email = (String) userInfo.get("email");
 
@@ -452,14 +457,14 @@ public class MemberController {
 			MemberDTO m = new MemberDTO();
 			m.setMemberEmail(email);
 			MemberDTO loginUser = memberService.snsLoginMember(m);
-			System.out.println(loginUser);
+			log.info(loginUser.toString());
 			if (!Objects.isNull(loginUser)) {
-				System.out.println("데이터(카카오 계정) 있음");
+				log.info("데이터(카카오 계정) 있음");
 				session.setAttribute("memberIdx", loginUser.getMemberIdx());
 //				String sessionMemberIdx = String.valueOf(loginUser.getMemberIdx());
 //				session.setAttribute("sessionMemberIdx", sessionMemberIdx);
 				session.setAttribute("memberId", loginUser.getMemberId());
-				System.out.println("memberId : " + loginUser.getMemberId());
+				log.info("memberId : " + loginUser.getMemberId());
 				return "redirect:/product/index";
 			} else {
 //				model.addAttribute("msg", "아이디 비밀번호를 확인해 주세요!");
@@ -467,7 +472,7 @@ public class MemberController {
 				return "/signin/signin";
 			}
 		} else {
-			System.out.println("카카오 계정 가입");
+			log.info("카카오 계정 가입");
 			MemberDTO md = new MemberDTO();
 			md.setMemberId(id);
 			md.setMemberPassword((String) userInfo.get("pw"));
@@ -482,13 +487,13 @@ public class MemberController {
 				MemberDTO m = new MemberDTO();
 				m.setMemberId(id);
 				MemberDTO loginUser = memberService.loginMember(m);
-				System.out.println(loginUser.toString());
+				log.info(loginUser.toString());
 				if (!Objects.isNull(loginUser)) {
 					session.setAttribute("memberIdx", loginUser.getMemberIdx());
 //					String sessionMemberIdx = String.valueOf(loginUser.getMemberIdx());
 //					session.setAttribute("sessionMemberIdx", sessionMemberIdx);
 					session.setAttribute("memberId", loginUser.getMemberId());
-					System.out.println("memberId : " + loginUser.getMemberId());
+					log.info("memberId : " + loginUser.getMemberId());
 					return "redirect:/product/index";
 				} else {
 //					model.addAttribute("msg", "아이디 비밀번호를 확인해 주세요!");
@@ -518,9 +523,9 @@ public class MemberController {
 	public String memberDelete(MemberDTO memberdto, HttpSession session, Model model) {		
 		
 		MemberDTO loginUser = memberService.loginMember(memberdto);
-		System.out.println("loginUser : " + loginUser);
+		log.info("loginUser : " + loginUser);
 		
-		System.out.println("memberDto : " + memberdto.getMemberPassword());
+		log.info("memberDto : " + memberdto.getMemberPassword());
 		
 		//bcryptPasswordEncoder 유저가 입력한 비밀번호 , db에서 불러올 암호화된 비밀번호 순서 지켜야함
 		if(bcryptPasswordEncoder.matches(memberdto.getMemberPassword(), loginUser.getMemberPassword())) {
@@ -530,12 +535,12 @@ public class MemberController {
 			
 			session.invalidate();
 			
-			System.out.println("탈퇴 성공");
+			log.info("탈퇴 성공");
 			
 			return "success";
 //			return "/product/index";
 		} else {
-			System.out.println("탈퇴 실패");
+			log.info("탈퇴 실패");
 			
 			return "failled";
 //			return "redirect:/member/editMyPage" ;

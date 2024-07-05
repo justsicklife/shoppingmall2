@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @RequestMapping("/review")
 @RequiredArgsConstructor
+@Slf4j
 public class ReviewController {
 	
 	final private ReviewService reviewService;
@@ -27,7 +29,8 @@ public class ReviewController {
 			HttpSession session
 			) {
 		
-		
+		log.info("getReviewCreatePage");
+			
 		Object obj =  session.getAttribute("memberId");
 		
 		String memberId= null;
@@ -48,6 +51,8 @@ public class ReviewController {
 	@PostMapping("/create")
 	public String postReviewCreatePage(ReviewDTO reviewDTO) {
 		
+		log.info("review Create");
+		
 		int succecss = reviewService.insertReview(reviewDTO);
 
 		return "redirect:/product/detail?product_id=" + reviewDTO.getProduct_id();
@@ -57,6 +62,8 @@ public class ReviewController {
 	public String getUpdatePage(
 			Model model,
 			@RequestParam("review_id") int review_id) {
+		
+		log.info("UpdatePage");
 		
 		ReviewDTO review = reviewService.reviewFindByReviewId(review_id);
 		
@@ -68,19 +75,20 @@ public class ReviewController {
 	@PostMapping("/update")
 	public String postUpdate( ReviewDTO reviewDTO) {
 		
+		log.info("review Update");
+		
 		int success = reviewService.reviewUpdpate(reviewDTO);
-		
-		
 		
 		return "redirect:/product/detail?product_id=" + reviewDTO.getProduct_id();	
 	}
 	
 	@PostMapping("/delete")
 	public String postDelete(ReviewDTO reviewDTO) {
+	
+		log.info("delete review");
 		
 		int success = reviewService.reviewDelete(reviewDTO.getReview_id());
-		
-		
+			
 		return "redirect:/product/detail?product_id=" + reviewDTO.getProduct_id();
 	}
 }

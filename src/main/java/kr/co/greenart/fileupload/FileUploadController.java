@@ -14,8 +14,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartRequest;
 
 import kr.co.greenart.common.FileUpload;
+import lombok.extern.slf4j.Slf4j;
 
 @Controller
+@Slf4j
 public class FileUploadController {
 	
 	@PostMapping("/fileUpload")
@@ -34,9 +36,9 @@ public class FileUploadController {
 
 		String path = request.getSession().getServletContext().getRealPath("/") + File.separator + "resources/upload"; // 파일이
 		
-		System.out.println("img : " +imgfile);
-		System.out.println("path : " + path);
-		System.out.println("replaceName : " + replaceName);
+		log.info("img : " +imgfile);
+		log.info("path : " + path);
+		log.info("replaceName : " + replaceName);
 		
 
 		FileUpload.fileUpload(imgfile, path, replaceName);

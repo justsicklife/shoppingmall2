@@ -27,11 +27,12 @@ import kr.co.greenart.common.Pagination;
 import kr.co.greenart.review.ReviewDTO;
 import kr.co.greenart.review.ReviewService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @RequestMapping("/product")
 @RequiredArgsConstructor
-
+@Slf4j
 public class ProductController {
 
 	final private ProductService productService;
@@ -40,13 +41,11 @@ public class ProductController {
 
 	final private BoardServiceImpl boardservice;
 
-	private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
-
 	@GetMapping("/index")
 	public String getIndexPage(HttpSession session, Model model) {
 
-		logger.info("ProductController index");
-
+		log.info("ProductController index");
+		
 		Map<String, List<ProductDTO>> mapProductDTO = productService
 				.getProductByTypes(Arrays.asList(ProductType.values()));
 
@@ -58,6 +57,8 @@ public class ProductController {
 	@GetMapping("/create")
 	public String getCreatePage(HttpSession session, Model model) {
 
+		log.info("getCreatePage");
+		
 		String msg = (String) session.getAttribute("msg");
 
 		session.removeAttribute("msg");
@@ -75,6 +76,8 @@ public class ProductController {
 			@RequestParam(value = "ipage", defaultValue = "1") int inquryCurrentPage, HttpSession session)
 			throws IOException {
 
+		log.info("getDetailPage");
+		
 		// 상품을 가져온다
 		ProductDTO productDTO = productService.productFindById(id);
 		// 각 별점 마다 갯수 구하는 메서드

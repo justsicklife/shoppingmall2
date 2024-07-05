@@ -44,17 +44,8 @@ public class ReviewRepository {
 	public int selectListCount(SqlSessionTemplate sql,int id) {
 		return sql.selectOne("s_review.selectListCount",id);
 	}
-
-//	public List<ReviewDTO> reviewSelectListAll(SqlSessionTemplate sql, PageInfo pi) {
-//		int offset = (pi.getCurrentPage() - 1) * pi.getBoardLimit();
-//
-//		RowBounds rowBounds = new RowBounds(offset, pi.getBoardLimit());
-//
-//		return sql.selectList("s_review.selectListAll", null, rowBounds);
-//	}
 	
 	public int getStarCountById(SqlSessionTemplate sql, Map<String, Integer> map) {
-		// TODO Auto-generated method stub
 		return sql.selectOne("s_review.getStarCountById",map);
 	}
 
