@@ -177,7 +177,7 @@ public class ProductController {
 			@RequestParam(name = "images", defaultValue = "", required = false) MultipartFile[] upload,
 			HttpServletRequest request, Model model, HttpSession session) throws IOException {
 
-		List<String> filePathList = reviewService.uploadFile(upload,
+		List<String> filePathList = productService.uploadFile(upload,
 				request.getSession().getServletContext().getRealPath("/"));
 
 		if (filePathList.size() != 0) {

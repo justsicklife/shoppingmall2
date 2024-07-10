@@ -1,5 +1,12 @@
 package kr.co.greenart.product;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,7 +15,10 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import kr.co.greenart.common.FileStorageUtil;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -26,11 +36,8 @@ public class ProductService {
 		Map<String,List<ProductDTO>> productsByType = new HashMap<>();
 		
 		types.forEach(type -> {
-			// type 순서대로 가져옴
 			List<ProductDTO> productList = productRepository.productFindByType(sql, type.getLabel());
 			
-			// 첫번째 이미지를 대표로 가져옴
-			// 1차 정규화를 했으면 좋았을 텐데
 			productList.forEach(product -> {
 				product.setProduct_image(product.getProduct_image_group().split(",")[0]);
 			});
@@ -50,6 +57,11 @@ public class ProductService {
 	
 	public ProductDTO productFindById(int id) {
 		return productRepository.productFindById(sql,id);
+	}
+	
+	public List<String> uploadFile(MultipartFile[] upload,String filePath) throws IOException {
+		List<String> filePathList = FileStorageUtil.saveFiles(upload, filePath);
+		return filePathList;
 	}
 
 }
